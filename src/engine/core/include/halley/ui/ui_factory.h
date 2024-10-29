@@ -92,8 +92,10 @@ namespace Halley
 		void loadUI(UIWidget& target, const UIDefinition& uiDefinition, IUIReloadObserver* observer = nullptr);
 
 		const UIFactoryWidgetProperties& getPropertiesForWidget(const String& widgetClass) const;
+		const UIFactoryWidgetProperties& getPropertiesForBehaviour(const String& behaviourClass) const;
 		UIFactoryWidgetProperties getGlobalWidgetProperties() const;
 		Vector<String> getWidgetClassList(bool mustAllowChildren = false) const;
+		Vector<String> getBehaviourList() const;
 
 		const HashMap<String, UIInputButtons>& getInputButtons() const;
 		void setInputButtons(HashMap<String, UIInputButtons> buttons);
@@ -228,7 +230,13 @@ namespace Halley
 		UIFactoryWidgetProperties getRenderSurfaceProperties() const;
 		UIFactoryWidgetProperties getCustomPaintProperties() const;
 		UIFactoryWidgetProperties getResizeDividerProperties() const;
-		
+
+		std::shared_ptr<UIBehaviour> makeSlideBehaviour(const ConfigNode& node);
+		std::shared_ptr<UIBehaviour> makeFadeBehaviour(const ConfigNode& node);
+
+		UIFactoryWidgetProperties getSlideBehaviourProperties() const;
+		UIFactoryWidgetProperties getFadeBehaviourProperties() const;
+
 		bool hasCondition(const String& condition) const;
 		bool resolveConditions(const ConfigNode& node) const;
 
@@ -241,7 +249,9 @@ namespace Halley
 		Vector<size_t> conditionStack;
 
 		HashMap<String, WidgetFactory> factories;
+		HashMap<String, BehaviourFactory> behaviourFactories;
 		HashMap<String, UIFactoryWidgetProperties> properties;
+		HashMap<String, UIFactoryWidgetProperties> behaviourProperties;
 		HashMap<String, UIInputButtons> inputButtons;
 
 		ConstructionCallback constructionCallback;

@@ -91,7 +91,12 @@ namespace Halley {
 
 	class ChooseUIWidgetWindow : public ChooseAssetWindow {
 	public:
-		ChooseUIWidgetWindow(UIFactory& factory, UIFactory& gameFactory, bool mustAllowChildren, Callback callback);
+		enum class Mode {
+			Widget,
+			Behaviour
+		};
+
+		ChooseUIWidgetWindow(UIFactory& factory, UIFactory& gameFactory, bool mustAllowChildren, Mode mode, Callback callback);
 
 	protected:
 		std::shared_ptr<UIImage> makeIcon(const String& id, bool hasSearch) override;
@@ -103,5 +108,6 @@ namespace Halley {
 	private:
 		UIFactory& factory;
 		UIFactory& gameFactory;
+		const Mode mode;
 	};
 }

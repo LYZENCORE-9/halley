@@ -95,6 +95,9 @@ UIFactory::UIFactory(const HalleyAPI& api, Resources& resources, const I18N& i18
 	addFactory("renderSurface", [=](const ConfigNode& node) { return makeRenderSurface(node); }, getRenderSurfaceProperties());
 	addFactory("customPaint", [=](const ConfigNode& node) { return makeCustomPaint(node); }, getCustomPaintProperties());
 	addFactory("resizeDivider", [=](const ConfigNode& node) { return makeResizeDivider(node); }, getResizeDividerProperties());
+
+	addBehaviourFactory("slide", [=](const ConfigNode& node) { return makeSlideBehaviour(node); }, getSlideBehaviourProperties());
+	addBehaviourFactory("fade", [=](const ConfigNode& node) { return makeFadeBehaviour(node); }, getFadeBehaviourProperties());
 }
 
 UIFactory::~UIFactory()
@@ -141,14 +144,28 @@ void UIFactory::setFallbackFactory(UIFactory& factory)
 	fallbackFactory = &factory;
 }
 
-void UIFactory::addBehaviourFactory(const String& key, BehaviourFactory factory, UIFactoryWidgetProperties properties)
+void UIFactory::addBehaviourFactory(const String& key, BehaviourFactory factory, UIFactoryWidgetProperties props)
 {
-	// TODO
+	if (props.iconName.isEmpty()) {
+		props.iconName = "widget_icons/generic.png";
+	}
+	if (props.name.isEmpty()) {
+		props.name = key;
+	}
+
+	behaviourFactories[key] = std::move(factory);
+	behaviourProperties[key] = std::move(props);
 }
 
 std::shared_ptr<UIBehaviour> UIFactory::makeBehaviourFromFactory(const String& key, const ConfigNode& config)
 {
-	// TODO
+	auto iter = behaviourFactories.find(key);
+	if (iter != behaviourFactories.end()) {
+		return iter->second(config);
+	}
+	if (fallbackFactory) {
+		fallbackFactory->makeBehaviourFromFactory(key, config);
+	}
 	return {};
 }
 
@@ -235,6 +252,18 @@ const UIFactoryWidgetProperties& UIFactory::getPropertiesForWidget(const String&
 	throw Exception("Unknown widget type: " + widgetClass, HalleyExceptions::Entity);
 }
 
+const UIFactoryWidgetProperties& UIFactory::getPropertiesForBehaviour(const String& behaviourClass) const
+{
+	const auto iter = behaviourProperties.find(behaviourClass);
+	if (iter != behaviourProperties.end()) {
+		return iter->second;
+	}
+	if (fallbackFactory) {
+		return fallbackFactory->getPropertiesForWidget(behaviourClass);
+	}
+	throw Exception("Unknown behaviour type: " + behaviourClass, HalleyExceptions::Entity);
+}
+
 Vector<String> UIFactory::getWidgetClassList(bool mustAllowChildren) const
 {
 	Vector<String> result;
@@ -247,6 +276,25 @@ Vector<String> UIFactory::getWidgetClassList(bool mustAllowChildren) const
 
 	if (fallbackFactory) {
 		for (const auto& id: fallbackFactory->getWidgetClassList(mustAllowChildren)) {
+			if (!std_ex::contains(result, id)) {
+				result.push_back(id);
+			}
+		}
+	}
+
+	return result;
+}
+
+Vector<String> UIFactory::getBehaviourList() const
+{
+	Vector<String> result;
+	result.reserve(behaviourProperties.size());
+	for (auto& p: behaviourProperties) {
+		result.push_back(p.first);
+	}
+
+	if (fallbackFactory) {
+		for (const auto& id: fallbackFactory->getBehaviourList()) {
 			if (!std_ex::contains(result, id)) {
 				result.push_back(id);
 			}
@@ -1776,6 +1824,43 @@ std::shared_ptr<UIWidget> UIFactory::makeResizeDivider(const ConfigNode& entryNo
 	auto widget = std::make_shared<UIResizeDivider>(std::move(id), type, getStyle(styleName));
 	return widget;
 }
+
+
+UIFactoryWidgetProperties UIFactory::getSlideBehaviourProperties() const
+{
+	UIFactoryWidgetProperties result;
+	result.name = "Slide";
+
+	result.entries.emplace_back("Delay", "delayIn", "Halley::Time", "0");
+	result.entries.emplace_back("Length", "lengthIn", "Halley::Time", "0");
+	result.entries.emplace_back("Offset", "offsetIn", "Halley::Vector2f", "");
+
+	return result;
+}
+
+std::shared_ptr<UIBehaviour> UIFactory::makeSlideBehaviour(const ConfigNode& node)
+{
+	// TODO
+	return {};
+}
+
+UIFactoryWidgetProperties UIFactory::getFadeBehaviourProperties() const
+{
+	UIFactoryWidgetProperties result;
+	result.name = "Fade";
+
+	result.entries.emplace_back("Delay", "delayIn", "Halley::Time", "0");
+	result.entries.emplace_back("Length", "lengthIn", "Halley::Time", "0");
+
+	return result;
+}
+
+std::shared_ptr<UIBehaviour> UIFactory::makeFadeBehaviour(const ConfigNode& node)
+{
+	// TODO
+	return {};
+}
+
 
 bool UIFactory::hasCondition(const String& condition) const
 {

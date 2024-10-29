@@ -41,5 +41,8 @@ namespace Halley {
         void populateBehavioursBox(UIWidget& root, ConfigNode& widgetNode);
 
         void populateBox(UIWidget& root, ConfigNode& node, gsl::span<const UIFactoryWidgetProperties::Entry> entries);
+
+        void addBehaviourToWidget();
+        void addBehaviourToWidget(const String& id);
     };
 }

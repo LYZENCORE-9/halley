@@ -44,9 +44,7 @@ void UIWidgetEditor::onMakeUI()
 
 	setHandle(UIEventType::ButtonClicked, "addBehaviour", [=] (const UIEvent& event)
 	{
-		// TODO
-		//(*curNode)["behaviours"].ensureType(ConfigNodeType::Sequence);
-		//onEntityUpdated(false);
+		addBehaviourToWidget();
 	});
 }
 
@@ -252,4 +250,27 @@ void UIWidgetEditor::populateBox(UIWidget& root, ConfigNode& node, gsl::span<con
 		auto field = entityFieldFactory->makeField(e.type, params, ComponentEditorLabelCreation::Always);
 		root.add(field);
 	}
+}
+
+void UIWidgetEditor::addBehaviourToWidget()
+{
+	const auto window = std::make_shared<ChooseUIWidgetWindow>(factory, factory, false, ChooseUIWidgetWindow::Mode::Behaviour, [=] (std::optional<String> result)
+	{
+		if (result) {
+			addBehaviourToWidget(result.value());
+		}
+	});
+	getRoot()->addChild(window);
+}
+
+void UIWidgetEditor::addBehaviourToWidget(const String& id)
+{
+	(*curNode)["behaviours"].ensureType(ConfigNodeType::Sequence);
+	auto& seq = (*curNode)["behaviours"].asSequence();
+
+	ConfigNode::MapType behaviourEntry;
+	behaviourEntry["class"] = id;
+	seq.push_back(behaviourEntry);
+
+	onEntityUpdated(false);
 }

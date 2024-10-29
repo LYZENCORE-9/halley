@@ -268,7 +268,7 @@ void UIEditor::goToWidget(const String& id)
 
 void UIEditor::addWidget()
 {
-	const auto window = std::make_shared<ChooseUIWidgetWindow>(factory, *gameFactory, false, [=] (std::optional<String> result)
+	const auto window = std::make_shared<ChooseUIWidgetWindow>(factory, *gameFactory, false, ChooseUIWidgetWindow::Mode::Widget, [=] (std::optional<String> result)
 	{
 		if (result) {
 			addWidget(result.value());
@@ -310,7 +310,7 @@ void UIEditor::replaceWidget()
 		auto& curData = *cur.result;
 		const bool mustAllowChildren = curData.hasKey("children") && !curData["children"].asSequence().empty();
 
-		const auto window = std::make_shared<ChooseUIWidgetWindow>(factory, *gameFactory, mustAllowChildren, [&] (std::optional<String> result)
+		const auto window = std::make_shared<ChooseUIWidgetWindow>(factory, *gameFactory, mustAllowChildren, ChooseUIWidgetWindow::Mode::Widget, [&] (std::optional<String> result)
 		{
 			if (result) {
 				if (result != "sizer" && result != "spacer") {
@@ -496,24 +496,30 @@ bool UIEditor::isEditingHalleyUI() const
 }
 
 
-ChooseUIWidgetWindow::ChooseUIWidgetWindow(UIFactory& factory, UIFactory& gameFactory, bool mustAllowChildren, Callback callback)
+ChooseUIWidgetWindow::ChooseUIWidgetWindow(UIFactory& factory, UIFactory& gameFactory, bool mustAllowChildren, Mode mode, Callback callback)
 	: ChooseAssetWindow(Vector2f(), factory, std::move(callback), {})
 	, factory(factory)
 	, gameFactory(gameFactory)
+	, mode(mode)
 {
-	auto ids = gameFactory.getWidgetClassList(mustAllowChildren);
+	auto ids = mode == Mode::Widget ? gameFactory.getWidgetClassList(mustAllowChildren) : gameFactory.getBehaviourList();
 	std::sort(ids.begin(), ids.end());
-	ids.push_back("sizer");
-	ids.push_back("spacer");
 
-	setAssetIds(std::move(ids), "widget");
-	setTitle(LocalisedString::fromHardcodedString("Choose Widget"));
+	if (mode == Mode::Widget) {
+		ids.push_back("sizer");
+		ids.push_back("spacer");
+	}
+
+	setAssetIds(std::move(ids), mode == Mode::Widget ? "widget" : "");
+	setTitle(LocalisedString::fromHardcodedString(mode == Mode::Widget ? "Choose Widget" : "Choose Behaviour"));
 }
 
 std::shared_ptr<UIImage> ChooseUIWidgetWindow::makeIcon(const String& id, bool hasSearch)
 {
 	String iconName;
-	if (id == "sizer") {
+	if (mode == Mode::Behaviour) {
+		iconName = gameFactory.getPropertiesForBehaviour(id).iconName;
+	} else if (id == "sizer") {
 		iconName = "widget_icons/sizer_horizontal.png";
 	} else if (id == "spacer") {
 		iconName = "widget_icons/spacer.png";
@@ -527,7 +533,9 @@ std::shared_ptr<UIImage> ChooseUIWidgetWindow::makeIcon(const String& id, bool h
 LocalisedString ChooseUIWidgetWindow::getItemLabel(const String& id, const String& name, bool hasSearch)
 {
 	String label;
-	if (id == "sizer") {
+	if (mode == Mode::Behaviour) {
+		label = gameFactory.getPropertiesForBehaviour(id).name;
+	} else if (id == "sizer") {
 		label = "Sizer";
 	} else if (id == "spacer") {
 		label = "Spacer";

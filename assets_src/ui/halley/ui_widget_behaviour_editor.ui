@@ -1,6 +1,7 @@
 uuid: a0366527-424e-4025-9b89-b9e05345f871
 sizer:
   columnProportions: []
+  type: vertical
 widget:
   class: widget
   id: border
@@ -57,6 +58,7 @@ children:
                 border: [0, 0, 0, 0]
                 widget:
                   class: button
+                  enabled: false
                   icon: entity_icons/copy_small.png
                   id: copyButton
                   mouseBorder: [0, 0, 0, 0]

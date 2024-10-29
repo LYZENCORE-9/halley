@@ -239,7 +239,18 @@ void UIWidgetEditor::populateSizerBox(UIWidget& root, ConfigNode& node)
 
 void UIWidgetEditor::populateBehavioursBox(UIWidget& root, ConfigNode& node)
 {
-	// TODO
+	root.clear();
+
+	if (!node.hasKey("behaviours")) {
+		return;
+	}
+
+	const auto& seq = node["behaviours"].asSequence();
+	for (size_t i = 0; i < seq.size(); ++i) {
+		if (auto widget = makeBehaviourUI(seq[i], i)) {
+			root.add(widget);
+		}
+	}
 }
 
 void UIWidgetEditor::populateBox(UIWidget& root, ConfigNode& node, gsl::span<const UIFactoryWidgetProperties::Entry> entries)
@@ -273,4 +284,43 @@ void UIWidgetEditor::addBehaviourToWidget(const String& id)
 	seq.push_back(behaviourEntry);
 
 	onEntityUpdated(false);
+	refresh();
+}
+
+void UIWidgetEditor::deleteBehaviour(size_t idx)
+{
+	auto& seq = (*curNode)["behaviours"].asSequence();
+	seq.erase(seq.begin() + idx);
+
+	refresh();
+}
+
+std::shared_ptr<UIWidget> UIWidgetEditor::makeBehaviourUI(const ConfigNode& behaviourConfig, size_t idx)
+{
+	const auto behaviourClass = behaviourConfig["class"].asString("");
+	if (behaviourClass.isEmpty()) {
+		return {};
+	}
+	const auto& properties = factory.getPropertiesForBehaviour(behaviourClass);
+
+	auto widget = factory.makeUI("halley/ui_widget_behaviour_editor");
+
+	widget->getWidgetAs<UILabel>("behaviourName")->setText(LocalisedString::fromUserString(properties.name));
+
+	// TODO: load fields
+
+	widget->setHandle(UIEventType::ButtonClicked, "copyButton", [=] (const UIEvent& event)
+	{
+		// TODO
+	});
+
+	widget->setHandle(UIEventType::ButtonClicked, "deleteButton", [=] (const UIEvent& event)
+	{
+		Concurrent::execute(Executors::getMainUpdateThread(), [this, idx]
+		{
+			deleteBehaviour(idx);
+		});
+	});
+
+	return widget;
 }

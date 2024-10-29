@@ -44,5 +44,7 @@ namespace Halley {
 
         void addBehaviourToWidget();
         void addBehaviourToWidget(const String& id);
+        void deleteBehaviour(size_t idx);
+        std::shared_ptr<UIWidget> makeBehaviourUI(const ConfigNode& behaviourConfig, size_t idx);
     };
 }

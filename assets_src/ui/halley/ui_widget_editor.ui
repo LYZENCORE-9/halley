@@ -202,9 +202,10 @@ children:
               text: Behaviours
             fill: centre
           - uuid: b2ee2bdb-f3c9-431f-a431-9557ecd249f6
-            border: [4, 4, 4, 0]
+            border: [6, 6, 6, 2]
             sizer:
               columnProportions: []
+              gap: 3
               type: vertical
             widget:
               class: widget
@@ -228,5 +229,9 @@ children:
                 border: [0, 0, 0, 0]
                 widget:
                   class: button
+                  enabled: false
                   id: pasteBehaviour
                   text: Paste Behaviour
+behaviours:
+  - class: fade
+  - class: slide

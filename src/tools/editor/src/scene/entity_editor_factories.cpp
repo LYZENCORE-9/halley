@@ -182,7 +182,7 @@ public:
 		const float value = data.getFieldData().asFloat(defaultValue);
 		auto container = std::make_shared<UIWidget>(data.getName(), Vector2f(), UISizer(UISizerType::Horizontal, 4.0f));
 
-		float granularity = 1;
+		float granularity = getDefaultGranularity();
 		std::optional<float> minValue;
 		std::optional<float> maxValue;
 
@@ -236,6 +236,11 @@ public:
 
 		return container;
 	}
+
+	virtual float getDefaultGranularity() const
+	{
+		return 1.0f;
+	}
 };
 
 class ComponentEditorFloatGranularityFieldFactory : public ComponentEditorFloatFieldFactory {
@@ -259,6 +264,11 @@ public:
 	String getFieldType() override
 	{
 		return "Halley::Time";
+	}
+
+	float getDefaultGranularity() const override
+	{
+		return 0.1f;
 	}
 };
 

@@ -210,6 +210,7 @@ children:
             widget:
               class: widget
               id: behavioursContents
+            behaviours: []
             children: []
           - uuid: 8e92775f-275a-4beb-b1b9-c994bb073928
             border: [5, 0, 5, 5]
@@ -232,6 +233,3 @@ children:
                   enabled: false
                   id: pasteBehaviour
                   text: Paste Behaviour
-behaviours:
-  - class: fade
-  - class: slide

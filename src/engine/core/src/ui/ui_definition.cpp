@@ -108,7 +108,7 @@ void UIDefinition::parseYAML(gsl::span<const gsl::byte> yaml)
 String UIDefinition::toYAML() const
 {
 	YAMLConvert::EmitOptions options;
-	options.mapKeyOrder = {{ "uuid", "proportion", "border", "sizer", "widget", "children" }};
+	options.mapKeyOrder = {{ "uuid", "proportion", "border", "sizer", "widget", "behaviours", "children" }};
 	return YAMLConvert::generateYAML(data.getRoot(), options);
 }
 

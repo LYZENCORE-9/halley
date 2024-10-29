@@ -129,8 +129,7 @@ bool UIFactory::hasFactoryFor(const String& key) const
 
 std::shared_ptr<UIWidget> UIFactory::makeWidgetFromFactory(const String& key, const ConfigNode& config)
 {
-	auto iter = factories.find(key);
-	if (iter != factories.end()) {
+	if (const auto iter = factories.find(key); iter != factories.end()) {
 		return iter->second(config);
 	}
 	if (fallbackFactory) {
@@ -159,8 +158,7 @@ void UIFactory::addBehaviourFactory(const String& key, BehaviourFactory factory,
 
 std::shared_ptr<UIBehaviour> UIFactory::makeBehaviourFromFactory(const String& key, const ConfigNode& config)
 {
-	auto iter = behaviourFactories.find(key);
-	if (iter != behaviourFactories.end()) {
+	if (const auto iter = behaviourFactories.find(key); iter != behaviourFactories.end()) {
 		return iter->second(config);
 	}
 	if (fallbackFactory) {
@@ -535,11 +533,17 @@ std::shared_ptr<IUIElement> UIFactory::makeWidget(const ConfigNode& entryNode)
 		if (widgetNode.hasKey("positionOffset")) {
 			widget->setPositionOffset(widgetNode["positionOffset"].asVector2f({}));
 		}
+		if (entryNode.hasKey("behaviours")) {
+			for (const auto& behaviourNode: entryNode["behaviours"].asSequence()) {
+				if (auto behaviour = makeBehaviourFromFactory(behaviourNode["class"].asString(""), behaviourNode)) {
+					widget->addBehaviour(behaviour);
+				}
+			}
+		}
 
 		element = widget;
 	} else {
-		auto sizer = makeSizer(entryNode);
-		if (sizer) {
+		if (auto sizer = makeSizer(entryNode)) {
 			element = std::make_shared<UISizer>(std::move(sizer.value()));
 		}
 	}

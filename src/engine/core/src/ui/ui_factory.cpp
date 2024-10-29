@@ -1838,6 +1838,7 @@ UIFactoryWidgetProperties UIFactory::getSlideBehaviourProperties() const
 	result.entries.emplace_back("Delay", "delayIn", "Halley::Time", "0");
 	result.entries.emplace_back("Length", "lengthIn", "Halley::Time", "0");
 	result.entries.emplace_back("Offset", "offsetIn", "Halley::Vector2f", "");
+	result.entries.emplace_back("Curve", "curveIn", "Halley::InterpolationCurveLerp", "");
 
 	return result;
 }
@@ -1855,6 +1856,7 @@ UIFactoryWidgetProperties UIFactory::getFadeBehaviourProperties() const
 
 	result.entries.emplace_back("Delay", "delayIn", "Halley::Time", "0");
 	result.entries.emplace_back("Length", "lengthIn", "Halley::Time", "0");
+	result.entries.emplace_back("Curve", "curveIn", "Halley::InterpolationCurveLerp", "");
 
 	return result;
 }

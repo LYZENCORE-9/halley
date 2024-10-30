@@ -14,6 +14,8 @@ namespace Halley {
 		void update(Time time) override;
 		bool isAlive() const override;
 
+		void restart() override;
+
 	private:
 		Time delay;
 		Time length;

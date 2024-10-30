@@ -26,3 +26,8 @@ bool UISlideBehaviour::isAlive() const
 {
 	return curTime <= delay + length;
 }
+
+void UISlideBehaviour::restart()
+{
+	curTime = 0;
+}

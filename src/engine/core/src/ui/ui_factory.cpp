@@ -198,7 +198,9 @@ std::shared_ptr<UIWidget> UIFactory::makeUIWithHotReload(const String& configNam
 	auto uiDefinition = resources.get<UIDefinition>(configName);
 	auto ui = makeUI(*uiDefinition);
 	if (api.core->isDevMode()) {
-		ui->addBehaviour(std::make_shared<UIReloadUIBehaviour>(*this, ResourceObserver(*uiDefinition), observer));
+		auto behaviour = std::make_shared<UIReloadUIBehaviour>(*this, ResourceObserver(*uiDefinition), observer);
+		behaviour->setInitial(true);
+		ui->addBehaviour(std::move(behaviour));
 	}
 	return ui;
 }
@@ -757,6 +759,7 @@ std::shared_ptr<UIWidget> UIFactory::makeLabel(const ConfigNode& entryNode)
 	if (node.hasKey("shadowColour")) {
 		label->getTextRenderer().setShadowColour(getColour(node["shadowColour"].asString()));
 	}
+	label->setReplayBehavioursOnModified(node["replayBehavioursOnModified"].asBool(false));
 	return label;
 }
 
@@ -779,6 +782,7 @@ UIFactoryWidgetProperties UIFactory::getLabelProperties() const
 	result.entries.emplace_back("Colour", "colour", "std::optional<Halley::Colour4f>", "");
 	result.entries.emplace_back("Outline Colour", "outlineColour", "std::optional<Halley::Colour4f>", "");
 	result.entries.emplace_back("Shadow Colour", "shadowColour", "std::optional<Halley::Colour4f>", "");
+	result.entries.emplace_back("Replay Behaviours on Modified", "replayBehavioursOnModified", "bool", "false");
 
 	result.name = "Label";
 	result.iconName = "widget_icons/label.png";

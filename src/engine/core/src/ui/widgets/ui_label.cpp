@@ -118,6 +118,9 @@ void UILabel::updateMinSize()
 void UILabel::updateText() {
 	renderer.setText(text);
 	updateMinSize();
+	if (replayOnModified) {
+		replayInitialBehaviours();
+	}
 }
 
 void UILabel::updateMarquee(Time t)
@@ -394,4 +397,9 @@ void UILabel::setDynamicValue(std::string_view key, ConfigNode value)
 	if (key == "alpha") {
 		setColour(getColour().withAlpha(value.asFloat(1.0f)));
 	}
+}
+
+void UILabel::setReplayBehavioursOnModified(bool replayOnModified)
+{
+	this->replayOnModified = replayOnModified;
 }

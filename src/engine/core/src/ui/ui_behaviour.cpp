@@ -44,6 +44,20 @@ bool UIBehaviour::isReversed() const
 	return reversed;
 }
 
+void UIBehaviour::setInitial(bool initial)
+{
+	this->initial = initial;
+}
+
+bool UIBehaviour::isInitial() const
+{
+	return initial;
+}
+
+void UIBehaviour::restart()
+{
+}
+
 void UIBehaviour::doInit(UIWidget& w)
 {
 	widget = &w;

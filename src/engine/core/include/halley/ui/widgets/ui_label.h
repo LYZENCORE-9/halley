@@ -51,6 +51,8 @@ namespace Halley {
 
 		void setDynamicValue(std::string_view key, ConfigNode value) override;
 
+		void setReplayBehavioursOnModified(bool replayOnModified);
+
 	protected:
 		void onParentChanged() override;
 
@@ -67,6 +69,7 @@ namespace Halley {
 		bool needsClipX = false;
 		bool needsClipY = false;
 		bool flowLayout = false;
+		bool replayOnModified = false;
 
 		Time marqueeIdle = 0;
 		std::optional<float> marqueeSpeed;

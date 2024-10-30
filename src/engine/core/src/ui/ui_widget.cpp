@@ -649,6 +649,9 @@ void UIWidget::forceAddChildren(UIInputType inputType, bool forceRecursive)
 
 void UIWidget::addBehaviour(std::shared_ptr<UIBehaviour> behaviour)
 {
+	if (behaviour->isInitial()) {
+		initialBehaviours.push_back(behaviour);
+	}
 	behaviours.push_back(std::move(behaviour));
 	behaviours.back()->doInit(*this);
 }
@@ -659,11 +662,26 @@ void UIWidget::clearBehaviours()
 		b->doDeInit();
 	}
 	behaviours.clear();
+	initialBehaviours.clear();
 }
 
 const Vector<std::shared_ptr<UIBehaviour>>& UIWidget::getBehaviours() const
 {
 	return behaviours;
+}
+
+void UIWidget::replayInitialBehaviours()
+{
+	for (auto& b: initialBehaviours) {
+		if (!behaviours.contains(b)) {
+			behaviours.push_back(b);
+		}
+	}
+	for (auto& b: behaviours) {
+		if (b->isInitial()) {
+			b->restart();
+		}
+	}
 }
 
 UIInputType UIWidget::getLastInputType() const

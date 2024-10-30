@@ -25,3 +25,8 @@ bool UIFadeBehaviour::isAlive() const
 {
 	return curTime <= delay + length;
 }
+
+void UIFadeBehaviour::restart()
+{
+	curTime = 0;
+}

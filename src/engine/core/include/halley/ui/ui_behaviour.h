@@ -22,11 +22,16 @@ namespace Halley {
 		virtual void setReversed(bool reversed);
 		virtual bool isReversed() const;
 
+		void setInitial(bool initial);
+		bool isInitial() const;
+		virtual void restart();
+
 	private:
 		friend class UIWidget;
 
 		UIWidget* widget = nullptr;
 		bool reversed = false;
+		bool initial = false;
 
 		void doInit(UIWidget& widget);
 		void doDeInit();

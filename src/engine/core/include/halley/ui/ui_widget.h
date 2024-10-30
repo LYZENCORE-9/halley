@@ -180,6 +180,7 @@ namespace Halley {
 		void addBehaviour(std::shared_ptr<UIBehaviour> behaviour);
 		void clearBehaviours();
 		const Vector<std::shared_ptr<UIBehaviour>>& getBehaviours() const;
+		void replayInitialBehaviours();
 
 		std::optional<AudioHandle> playSound(const String& eventName);
 
@@ -305,6 +306,7 @@ namespace Halley {
 		std::shared_ptr<UIDataBind> dataBind;
 		std::unique_ptr<UIAnchor> anchor;
 		Vector<std::shared_ptr<UIBehaviour>> behaviours;
+		Vector<std::shared_ptr<UIBehaviour>> initialBehaviours;
 
 		std::unique_ptr<LocalisedString> toolTip;
 

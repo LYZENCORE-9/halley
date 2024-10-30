@@ -46,6 +46,11 @@ void UIWidgetEditor::onMakeUI()
 	{
 		addBehaviourToWidget();
 	});
+
+	setHandle(UIEventType::ButtonClicked, "pasteBehaviours", [=] (const UIEvent& event)
+	{
+		pasteBehaviours();
+	});
 }
 
 void UIWidgetEditor::setSelectedWidget(const String& id, ConfigNode* node, const ConfigNode* parent)
@@ -312,12 +317,23 @@ std::shared_ptr<UIWidget> UIWidgetEditor::makeBehaviourUI(ConfigNode& behaviourC
 	widget->getWidgetAs<UILabel>("behaviourName")->setText(LocalisedString::fromUserString(properties.name));
 	populateBox(*widget->getWidget("behaviourFields"), behaviourConfig, properties.entries);
 
-	widget->setHandle(UIEventType::ButtonClicked, "copyButton", [=] (const UIEvent& event)
+	widget->setHandle(UIEventType::ButtonClicked, "copyButton", [this, &behaviourConfig] (const UIEvent& event)
 	{
-		// TODO
+		ConfigNode result;
+		result["behaviours"].ensureType(ConfigNodeType::Sequence);
+
+		if ((event.getKeyMods() & KeyMods::Ctrl) != KeyMods::None) {
+			// Append
+			result["behaviours"] = getBehavioursFromClipboard();
+		}
+
+		result["behaviours"].asSequence().push_back(behaviourConfig);
+
+		auto clipboard = projectWindow->getAPI().system->getClipboard();
+		clipboard->setData(YAMLConvert::generateYAML(result, {}));
 	});
 
-	widget->setHandle(UIEventType::ButtonClicked, "deleteButton", [=] (const UIEvent& event)
+	widget->setHandle(UIEventType::ButtonClicked, "deleteButton", [this, idx] (const UIEvent& event)
 	{
 		Concurrent::execute(Executors::getMainUpdateThread(), [this, idx]
 		{
@@ -326,4 +342,39 @@ std::shared_ptr<UIWidget> UIWidgetEditor::makeBehaviourUI(ConfigNode& behaviourC
 	});
 
 	return widget;
+}
+
+void UIWidgetEditor::pasteBehaviours()
+{
+	auto& behs = (*curNode)["behaviours"];
+	behs.ensureType(ConfigNodeType::Sequence);
+
+	bool modified = false;
+	for (const auto& e: getBehavioursFromClipboard()) {
+		behs.asSequence().push_back(e);
+		modified = true;
+	}
+
+	if (modified) {
+		onEntityUpdated(false);
+		refresh();
+	}
+}
+
+Vector<ConfigNode> UIWidgetEditor::getBehavioursFromClipboard() const
+{
+	Vector<ConfigNode> result;
+
+	const auto clipboard = projectWindow->getAPI().system->getClipboard();
+	const auto data = clipboard->getStringData();
+	if (data && !data->isEmpty()) {
+		try {
+			auto config = YAMLConvert::parseConfig(*data, {});
+			if (config.hasKey("behaviours")) {
+				result = config["behaviours"].asSequence();
+			}
+		} catch (...) {}
+	}
+
+	return result;
 }

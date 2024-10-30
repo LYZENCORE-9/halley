@@ -58,13 +58,13 @@ children:
                 border: [0, 0, 0, 0]
                 widget:
                   class: button
-                  enabled: false
+                  enabled: true
                   icon: entity_icons/copy_small.png
                   id: copyButton
                   mouseBorder: [0, 0, 0, 0]
                   size: [20, 18]
                   style: buttonThin
-                  tooltip: Copy Component to Clipboard. Hold Ctrl to append to existing Clipboard copy.
+                  tooltip: Copy behaviour to Clipboard. Hold Ctrl to append to existing Clipboard copy.
               - uuid: 79c067fd-14ac-4ca3-a73e-81d1bcc0b1bb
                 border: [0, 0, 0, 0]
                 widget:

@@ -1927,3 +1927,4 @@ void UIFactory::setColourScheme(const String& assetId)
 		colourScheme = std::make_shared<UIColourScheme>(resources.get<ConfigFile>(assetId)->getRoot(), resources);
 	}
 }
+

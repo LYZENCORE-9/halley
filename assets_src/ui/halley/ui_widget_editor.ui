@@ -230,6 +230,6 @@ children:
                 border: [0, 0, 0, 0]
                 widget:
                   class: button
-                  enabled: false
-                  id: pasteBehaviour
-                  text: Paste Behaviour
+                  enabled: true
+                  id: pasteBehaviours
+                  text: Paste Behaviours

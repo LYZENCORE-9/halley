@@ -8,6 +8,7 @@
 #include "halley/ui/ui_behaviour.h"
 #include "halley/ui/ui_event_handler.h"
 #include "halley/input/input_keyboard.h"
+#include "halley/utils/algorithm.h"
 
 using namespace Halley;
 
@@ -989,13 +990,12 @@ void UIWidget::updateBehaviours(Time t)
 {
 	for (auto& behaviour: behaviours) {
 		behaviour->update(t);
+		if (!behaviour->isAlive()) {
+			behaviour->doDeInit();
+		}
 	}
 
-	auto firstRemoved = std::remove_if(behaviours.begin(), behaviours.end(), [] (const std::shared_ptr<UIBehaviour>& behaviour) { return !behaviour->isAlive(); });
-	for (auto iter = firstRemoved; iter != behaviours.end(); ++iter) {
-		(*iter)->doDeInit();
-	}
-	behaviours.erase(firstRemoved, behaviours.end());
+	std_ex::erase_if(behaviours, [] (const std::shared_ptr<UIBehaviour>& behaviour) { return !behaviour->isAlive(); });
 }
 
 void UIWidget::onFocus(bool byClicking)

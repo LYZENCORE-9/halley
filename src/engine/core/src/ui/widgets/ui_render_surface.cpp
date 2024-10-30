@@ -256,3 +256,10 @@ bool UIRenderSurface::ignoreClip() const
 {
 	return true;
 }
+
+void UIRenderSurface::setDynamicValue(std::string_view key, ConfigNode value)
+{
+	if (key == "alpha") {
+		setColour(getColour().withAlpha(value.asFloat(1.0f)));
+	}
+}

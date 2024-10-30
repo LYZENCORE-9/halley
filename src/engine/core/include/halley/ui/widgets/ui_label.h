@@ -49,6 +49,8 @@ namespace Halley {
 		void setFontSize(float size);
 		Vector2f getMinimumSize() const override;
 
+		void setDynamicValue(std::string_view key, ConfigNode value) override;
+
 	protected:
 		void onParentChanged() override;
 

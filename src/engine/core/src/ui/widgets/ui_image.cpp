@@ -188,6 +188,13 @@ bool UIImage::isMouseInside(Vector2f mousePos) const
 	return UIWidget::isMouseInside(mousePos) && sprite.hasPointVisible(mousePos);
 }
 
+void UIImage::setDynamicValue(std::string_view key, ConfigNode value)
+{
+	if (key == "alpha") {
+		sprite.setAlpha(value.asFloat(1.0f));
+	}
+}
+
 UIImageVisibleBehaviour::UIImageVisibleBehaviour(Callback onVisible, Callback onInvisible)
 	: onVisible(std::move(onVisible))
 	, onInvisible(std::move(onInvisible))

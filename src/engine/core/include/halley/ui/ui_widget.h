@@ -213,6 +213,8 @@ namespace Halley {
 		virtual void collectWidgetsForUpdating(Vector<std::shared_ptr<UIWidget>>& dst);
 		virtual void collectWidgetsForRendering(size_t curRootIdx, Vector<std::pair<std::shared_ptr<UIWidget>, size_t>>& dst, Vector<std::shared_ptr<UIWidget>>& dstRoots);
 
+		virtual void setDynamicValue(std::string_view key, ConfigNode value);
+
 	protected:
 		virtual void draw(UIPainter& painter) const;
 		virtual void drawAfterChildren(UIPainter& painter) const;

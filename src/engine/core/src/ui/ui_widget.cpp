@@ -132,6 +132,10 @@ void UIWidget::collectWidgetsForRendering(size_t curRootIdx, Vector<std::pair<st
 	}
 }
 
+void UIWidget::setDynamicValue(std::string_view key, ConfigNode value)
+{
+}
+
 Vector2f UIWidget::getLayoutMinimumSize(bool force) const
 {
 	if (!isActive() && !force) {

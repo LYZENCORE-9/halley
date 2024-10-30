@@ -23,12 +23,14 @@
 #include "halley/support/logger.h"
 #include "halley/ui/ui_validator.h"
 #include "halley/graphics/material/material_definition.h"
+#include "halley/ui/behaviours/ui_fade_behaviour.h"
 #include "halley/ui/widgets/ui_framed_image.h"
 #include "halley/ui/widgets/ui_hybrid_list.h"
 #include "halley/ui/widgets/ui_spin_list.h"
 #include "halley/ui/widgets/ui_option_list_morpher.h"
 #include "halley/ui/widgets/ui_tree_list.h"
 #include "halley/ui/behaviours/ui_reload_ui_behaviour.h"
+#include "halley/ui/behaviours/ui_slide_behaviour.h"
 #include "halley/ui/widgets/ui_custom_paint.h"
 #include "halley/ui/widgets/ui_debug_console.h"
 #include "halley/ui/widgets/ui_render_surface.h"
@@ -1845,8 +1847,11 @@ UIFactoryWidgetProperties UIFactory::getSlideBehaviourProperties() const
 
 std::shared_ptr<UIBehaviour> UIFactory::makeSlideBehaviour(const ConfigNode& node)
 {
-	// TODO
-	return {};
+	auto delay = node["delayIn"].asFloat(0);
+	auto length = node["lengthIn"].asFloat(0);
+	auto offset = node["offsetIn"].asVector2f({});
+	auto curve = InterpolationCurve(node["curveIn"]);
+	return std::make_shared<UISlideBehaviour>(delay, length, offset, curve);
 }
 
 UIFactoryWidgetProperties UIFactory::getFadeBehaviourProperties() const
@@ -1863,8 +1868,10 @@ UIFactoryWidgetProperties UIFactory::getFadeBehaviourProperties() const
 
 std::shared_ptr<UIBehaviour> UIFactory::makeFadeBehaviour(const ConfigNode& node)
 {
-	// TODO
-	return {};
+	auto delay = node["delayIn"].asFloat(0);
+	auto length = node["lengthIn"].asFloat(0);
+	auto curve = InterpolationCurve(node["curveIn"]);
+	return std::make_shared<UIFadeBehaviour>(delay, length, curve);
 }
 
 

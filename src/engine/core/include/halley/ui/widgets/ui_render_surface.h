@@ -40,6 +40,8 @@ namespace Halley {
 
         bool ignoreClip() const override;
 
+        void setDynamicValue(std::string_view key, ConfigNode value) override;
+
     private:
         std::unique_ptr<RenderSurface> renderSurface;
 

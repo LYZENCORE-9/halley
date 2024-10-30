@@ -31,6 +31,8 @@ namespace Halley {
 		bool isDrawing() const;
 		bool isMouseInside(Vector2f mousePos) const override;
 
+		void setDynamicValue(std::string_view key, ConfigNode value) override;
+
 	private:
 		Sprite sprite;
 		Vector2f topLeftBorder;

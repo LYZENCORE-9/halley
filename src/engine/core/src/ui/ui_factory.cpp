@@ -198,9 +198,7 @@ std::shared_ptr<UIWidget> UIFactory::makeUIWithHotReload(const String& configNam
 	auto uiDefinition = resources.get<UIDefinition>(configName);
 	auto ui = makeUI(*uiDefinition);
 	if (api.core->isDevMode()) {
-		auto behaviour = std::make_shared<UIReloadUIBehaviour>(*this, ResourceObserver(*uiDefinition), observer);
-		behaviour->setInitial(true);
-		ui->addBehaviour(std::move(behaviour));
+		ui->addBehaviour(std::make_shared<UIReloadUIBehaviour>(*this, ResourceObserver(*uiDefinition), observer));
 	}
 	return ui;
 }
@@ -540,6 +538,7 @@ std::shared_ptr<IUIElement> UIFactory::makeWidget(const ConfigNode& entryNode)
 		if (entryNode.hasKey("behaviours")) {
 			for (const auto& behaviourNode: entryNode["behaviours"].asSequence()) {
 				if (auto behaviour = makeBehaviourFromFactory(behaviourNode["class"].asString(""), behaviourNode)) {
+					behaviour->setInitial(true);
 					widget->addBehaviour(behaviour);
 				}
 			}

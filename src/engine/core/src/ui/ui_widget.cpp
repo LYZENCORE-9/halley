@@ -662,7 +662,6 @@ void UIWidget::clearBehaviours()
 		b->doDeInit();
 	}
 	behaviours.clear();
-	initialBehaviours.clear();
 }
 
 const Vector<std::shared_ptr<UIBehaviour>>& UIWidget::getBehaviours() const

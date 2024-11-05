@@ -96,7 +96,7 @@ namespace Halley {
 			Behaviour
 		};
 
-		ChooseUIWidgetWindow(UIFactory& factory, UIFactory& gameFactory, bool mustAllowChildren, Mode mode, Callback callback);
+		ChooseUIWidgetWindow(UIFactory& factory, UIFactory& gameFactory, Vector2f minSize, bool mustAllowChildren, Mode mode, Callback callback);
 
 	protected:
 		std::shared_ptr<UIImage> makeIcon(const String& id, bool hasSearch) override;

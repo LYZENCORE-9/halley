@@ -268,7 +268,9 @@ void UIEditor::goToWidget(const String& id)
 
 void UIEditor::addWidget()
 {
-	const auto window = std::make_shared<ChooseUIWidgetWindow>(factory, *gameFactory, false, ChooseUIWidgetWindow::Mode::Widget, [=] (std::optional<String> result)
+	const auto windowSize = getRoot()->getRect().getSize() - Vector2f(900, 350);
+
+	const auto window = std::make_shared<ChooseUIWidgetWindow>(factory, *gameFactory, windowSize, false, ChooseUIWidgetWindow::Mode::Widget, [=] (std::optional<String> result)
 	{
 		if (result) {
 			addWidget(result.value());
@@ -310,7 +312,9 @@ void UIEditor::replaceWidget()
 		auto& curData = *cur.result;
 		const bool mustAllowChildren = curData.hasKey("children") && !curData["children"].asSequence().empty();
 
-		const auto window = std::make_shared<ChooseUIWidgetWindow>(factory, *gameFactory, mustAllowChildren, ChooseUIWidgetWindow::Mode::Widget, [&] (std::optional<String> result)
+		const auto windowSize = getRoot()->getRect().getSize() - Vector2f(900, 350);
+
+		const auto window = std::make_shared<ChooseUIWidgetWindow>(factory, *gameFactory, windowSize, mustAllowChildren, ChooseUIWidgetWindow::Mode::Widget, [&] (std::optional<String> result)
 		{
 			if (result) {
 				if (result != "sizer" && result != "spacer") {
@@ -351,6 +355,7 @@ void UIEditor::loadGameFactory()
 		gameI18N = std::make_unique<I18N>(gameResources, I18NLanguage("en-GB"));
 		auto* game = project.getGameInstance();
 		gameFactory = game->createUIFactory(projectWindow.getAPI(), gameResources, *gameI18N);
+		gameFactory->setGameEditorData(project.getGameEditorData());
 		gameFactory->setFallbackFactory(factory);
 	}
 }
@@ -496,8 +501,8 @@ bool UIEditor::isEditingHalleyUI() const
 }
 
 
-ChooseUIWidgetWindow::ChooseUIWidgetWindow(UIFactory& factory, UIFactory& gameFactory, bool mustAllowChildren, Mode mode, Callback callback)
-	: ChooseAssetWindow(Vector2f(), factory, std::move(callback), {})
+ChooseUIWidgetWindow::ChooseUIWidgetWindow(UIFactory& factory, UIFactory& gameFactory, Vector2f minSize, bool mustAllowChildren, Mode mode, Callback callback)
+	: ChooseAssetWindow(minSize, factory, std::move(callback), {})
 	, factory(factory)
 	, gameFactory(gameFactory)
 	, mode(mode)

@@ -270,7 +270,9 @@ void UIWidgetEditor::populateBox(UIWidget& root, ConfigNode& node, gsl::span<con
 
 void UIWidgetEditor::addBehaviourToWidget()
 {
-	const auto window = std::make_shared<ChooseUIWidgetWindow>(factory, factory, false, ChooseUIWidgetWindow::Mode::Behaviour, [=] (std::optional<String> result)
+	const auto windowSize = getRoot()->getRect().getSize() - Vector2f(900, 350);
+
+	const auto window = std::make_shared<ChooseUIWidgetWindow>(factory, factory, windowSize, false, ChooseUIWidgetWindow::Mode::Behaviour, [=] (std::optional<String> result)
 	{
 		if (result) {
 			addBehaviourToWidget(result.value());

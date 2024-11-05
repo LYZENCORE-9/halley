@@ -9,6 +9,7 @@ UIAnimation::UIAnimation(String id, Vector2f size, Vector2f animationOffset, Ani
 UIAnimation::UIAnimation(String id, Vector2f size, std::optional<UISizer> sizer, Vector2f animationOffset, AnimationPlayer animation)
 	: UIWidget(std::move(id), size, std::move(sizer))
 	, offset(animationOffset)
+	, scale(Vector2f(1, 1))
 	, animation(std::move(animation))
 	, colour(Colour4f(1, 1, 1, 1))
 {
@@ -59,12 +60,22 @@ bool UIAnimation::isMouseInside(Vector2f mousePos) const
 	return UIWidget::isMouseInside(mousePos) && sprite.hasPointVisible(mousePos);
 }
 
+void UIAnimation::setScale(Vector2f scale)
+{
+	this->scale = scale;
+}
+
+Vector2f UIAnimation::getScale() const
+{
+	return scale;
+}
+
 void UIAnimation::update(Time t, bool moved)
 {
 	if (animation.hasAnimation()) {
 		animation.update(t);
 		animation.updateSprite(sprite);
-		sprite.setPos(getPosition() + offset).setColour(colour);
+		sprite.setPos(getPosition() + offset).setColour(colour).setScale(scale);
 	}
 }
 

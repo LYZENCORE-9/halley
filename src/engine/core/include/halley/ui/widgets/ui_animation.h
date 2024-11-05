@@ -26,12 +26,16 @@ namespace Halley
 
 		bool isMouseInside(Vector2f mousePos) const override;
 
+		void setScale(Vector2f scale);
+		Vector2f getScale() const;
+
 	protected:
 		void update(Time t, bool moved) override;
 		void draw(UIPainter& painter) const override;
 
 	private:
 		Vector2f offset;
+		Vector2f scale;
 		AnimationPlayer animation;
 		Sprite sprite;
 		Colour4f colour;

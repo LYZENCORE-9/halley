@@ -122,6 +122,7 @@ namespace Halley
 		virtual Sprite makeImportAssetTypeIcon(ImportAssetType type) const;
 
 		void setConstructionCallback(ConstructionCallback callback);
+		virtual void setGameEditorData(IGameEditorData* gameEditorData);
 
 		static UISizerAlignFlags::Type parseSizerAlignFlags(const ConfigNode& node, UISizerAlignFlags::Type defaultValue = UISizerAlignFlags::Fill);
 		static ConfigNode makeSizerAlignFlagsNode(UISizerAlignFlags::Type align);

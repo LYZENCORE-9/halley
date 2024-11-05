@@ -1696,15 +1696,20 @@ void UIFactory::applyListProperties(UIList& list, const ConfigNode& node, const 
 			if (!o.imageColour.isEmpty()) {
 				normalSprite.setColour(Colour4f(o.imageColour));
 			}
-			auto image = std::make_shared<UIImage>(normalSprite);
 
-			if (!o.inactiveImage.isEmpty()) {
-				Sprite inactiveSprite = Sprite().setImage(resources, o.inactiveImage);
-				image->setSelectable(inactiveSprite, normalSprite);
-				image->setSprite(inactiveSprite);
+			if (o.displayText.getString().isEmpty()) {
+				auto image = std::make_shared<UIImage>(normalSprite);
+
+				if (!o.inactiveImage.isEmpty()) {
+					Sprite inactiveSprite = Sprite().setImage(resources, o.inactiveImage);
+					image->setSelectable(inactiveSprite, normalSprite);
+					image->setSprite(inactiveSprite);
+				}
+
+				list.addImage(o.id, image, 1, o.border, UISizerAlignFlags::Centre);
+			} else {
+				list.addTextIconItem(o.id, o.displayText, normalSprite, -1, o.border, o.centre ? UISizerAlignFlags::Centre : UISizerAlignFlags::CentreVertical);
 			}
-
-			list.addImage(o.id, image, 1, o.border, UISizerAlignFlags::Centre);
 		} else {
 			list.addTextItem(o.id, o.displayText, -1, o.centre);
 		}

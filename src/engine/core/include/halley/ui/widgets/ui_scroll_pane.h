@@ -52,6 +52,8 @@ namespace Halley {
 
 		void onChildrenAdded() override;
 		void onChildrenRemoved() override;
+
+		bool canChildrenInteractWithMouseAt(Vector2f pos) const override;
     	
     protected:
 	    void drawChildren(UIPainter& painter) const override;

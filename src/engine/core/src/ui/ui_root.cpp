@@ -533,6 +533,7 @@ void UIRoot::updateMouseOver(const std::shared_ptr<UIWidget>& underMouse)
 		}
 		if (underMouse) {
 			underMouse->setMouseOver(true);
+			underMouse->onMouseOver(lastMousePos);
 		}
 		currentMouseOver = underMouse;
 	}
@@ -568,7 +569,7 @@ UIRoot::WidgetUnderMouseResult UIRoot::getWidgetUnderMouse(const std::shared_ptr
 		const int adjustmentForChildren = childLayerAdjustment + curWidget->getChildLayerAdjustment();
 		WidgetUnderMouseResult bestResult;
 
-		if (curWidget->canChildrenInteractWithMouse()) {
+		if (curWidget->canChildrenInteractWithMouse() && curWidget->canChildrenInteractWithMouseAt(mousePos)) {
 			const auto& cs = curWidget->getChildren().span();
 
 			for (int i = int(cs.size()); --i >= 0;) {

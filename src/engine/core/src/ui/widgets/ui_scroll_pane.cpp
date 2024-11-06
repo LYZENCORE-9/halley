@@ -303,3 +303,8 @@ void UIScrollPane::onChildrenRemoved()
 {
 	refresh(true);
 }
+
+bool UIScrollPane::canChildrenInteractWithMouseAt(Vector2f pos) const
+{
+	return getRect().contains(pos);
+}

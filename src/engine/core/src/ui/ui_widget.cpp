@@ -330,6 +330,11 @@ bool UIWidget::canChildrenInteractWithMouse() const
 	return true;
 }
 
+bool UIWidget::canChildrenInteractWithMouseAt(Vector2f pos) const
+{
+	return true;
+}
+
 bool UIWidget::isFocused() const
 {
 	return focused;

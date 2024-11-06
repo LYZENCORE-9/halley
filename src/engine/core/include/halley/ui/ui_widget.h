@@ -73,6 +73,7 @@ namespace Halley {
 		void setInteractWithMouse(bool enabled);
 		virtual bool canInteractWithMouse() const;
 		virtual bool canChildrenInteractWithMouse() const;
+		virtual bool canChildrenInteractWithMouseAt(Vector2f pos) const;
 		bool canPropagateMouseToChildren() const;
 		void setPropagateMouseToChildren(bool enabled);
 		virtual void notifyWidgetUnderMouse(const std::shared_ptr<UIWidget>& widget);

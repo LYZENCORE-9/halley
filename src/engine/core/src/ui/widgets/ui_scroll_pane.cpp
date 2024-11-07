@@ -1,4 +1,6 @@
 #include "halley/ui/widgets/ui_scroll_pane.h"
+
+#include "halley/graphics/painter.h"
 #include "halley/ui/ui_style.h"
 #include "halley/support/logger.h"
 
@@ -306,5 +308,7 @@ void UIScrollPane::onChildrenRemoved()
 
 bool UIScrollPane::canChildrenInteractWithMouseAt(Vector2f pos) const
 {
-	return getRect().contains(pos);
+	auto rect = getRect();
+	return (!scrollHorizontal || rect.getHorizontal().contains(pos.x))
+		&& (!scrollVertical || rect.getVertical().contains(pos.y));
 }

@@ -152,7 +152,7 @@ void PerformanceStatsView::setPage(int page)
 
 bool PerformanceStatsView::isInputActive() const
 {
-	return page > 0;
+	return isActive() && page > 0;
 }
 
 PerformanceStatsView::EventHistoryData::EventHistoryData()

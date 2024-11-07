@@ -29,6 +29,9 @@ namespace Halley
 		int getPage() const;
 		void setPage(int page);
 
+	protected:
+		bool isInputActive() const override;
+
 	private:
 		class FrameData {
 		public:

@@ -43,6 +43,9 @@ StatsView::StatsView(Resources& resources, const HalleyAPI& api)
 
 void StatsView::update(Time t)
 {
+	if (input) {
+		input->setEnabled(isInputActive());
+	}
 }
 
 void StatsView::draw(RenderContext& context)
@@ -54,7 +57,7 @@ void StatsView::setActive(bool active)
 {
 	this->active = active;
 	if (input) {
-		input->setEnabled(active);
+		input->setEnabled(isInputActive());
 	}
 }
 
@@ -73,11 +76,16 @@ void StatsView::setInput(std::shared_ptr<InputVirtual> input, const StatsViewCon
 	Vector<int> axes = { controls.xAxis, controls.yAxis };
 	Vector<int> buttons = { controls.accept, controls.cancel, controls.prevTab, controls.nextTab };
 	this->input = std::make_shared<InputExclusive>(input, InputPriority::Maximum, axes, buttons);
-	this->input->setEnabled(active);
+	this->input->setEnabled(isInputActive());
 }
 
 String StatsView::formatTime(int64_t ns) const
 {
 	const int64_t us = (ns + 500) / 1000;
 	return toString(us / 1000) + "." + toString(us % 1000, 10, 3);
+}
+
+bool StatsView::isInputActive() const
+{
+	return isActive();
 }

@@ -150,6 +150,11 @@ void PerformanceStatsView::setPage(int page)
 	this->page = page;
 }
 
+bool PerformanceStatsView::isInputActive() const
+{
+	return page > 0;
+}
+
 PerformanceStatsView::EventHistoryData::EventHistoryData()
 {
 }

@@ -69,5 +69,7 @@ namespace Halley {
 		std::shared_ptr<InputExclusive> input;
 
         String formatTime(int64_t ns) const;
+
+		virtual bool isInputActive() const;
     };
 }

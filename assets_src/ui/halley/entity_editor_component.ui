@@ -103,5 +103,6 @@ children:
               gap: 2
               type: vertical
             widget:
+              childLayerAdjustment: 1
               class: widget
               id: componentFields

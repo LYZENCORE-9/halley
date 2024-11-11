@@ -564,8 +564,7 @@ void Core::render()
 
 			try {
 				currentStage->onRender(context, *frameDataRender);
-			}
-			catch (Exception& e) {
+			} catch (Exception& e) {
 				game->onUncaughtException(e, TimeLine::Render);
 			}
 		}

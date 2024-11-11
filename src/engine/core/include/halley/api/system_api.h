@@ -92,6 +92,9 @@ namespace Halley
 		};
 		virtual MemoryUsage getMemoryUsage() { return {}; }
 
+		using ResolutionChangeCallback = std::function<void(Vector2i)>;
+		virtual void setResolutionChangeCallback(int screen, ResolutionChangeCallback callback) {}
+
 	private:
 		friend class HalleyAPI;
 		friend class Core;

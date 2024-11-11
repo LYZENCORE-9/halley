@@ -112,13 +112,17 @@ void Options::setResolution(bool fullscreen, Vector2i resolution)
 
 bool Options::getFullscreen() const
 {
-#ifdef DEV_BUILD
-	const bool defaultValue = false;
-#else
-	const bool defaultValue = true;
-#endif
+	if constexpr (isPCPlatform()) {
+	#ifdef DEV_BUILD
+		const bool defaultValue = false;
+	#else
+		const bool defaultValue = true;
+	#endif
 
-	return getOption("fullscreen").asBool(defaultValue);
+		return getOption("fullscreen").asBool(defaultValue);
+	} else {
+		return true;
+	}
 }
 
 void Options::setFullscreen(bool fullscreen)

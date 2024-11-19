@@ -208,7 +208,7 @@ void UIDropdown::draw(UIPainter& painter) const
 
 void UIDropdown::drawChildren(UIPainter& painter) const
 {
-	auto p2 = painter.withClip(std::nullopt);
+	auto p2 = painter.withNoClip();
 	UIClickable::drawChildren(p2);
 }
 

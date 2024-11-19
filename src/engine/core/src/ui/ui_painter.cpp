@@ -33,8 +33,10 @@ UIPainter UIPainter::withClip(std::optional<Rect4f> newClip) const
 	auto result = clone();
 	if (newClip && clip) {
 		result.clip = clip->intersection(newClip.value());
-	} else {
+	} else if (newClip) {
 		result.clip = newClip;
+	} else {
+		result.clip = clip;
 	}
 	return result;
 }

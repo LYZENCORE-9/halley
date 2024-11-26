@@ -53,6 +53,8 @@ namespace Halley {
 
 		void setReplayBehavioursOnModified(bool replayOnModified);
 
+		void setWorldClip(Rect4f rect);
+
 	protected:
 		void onParentChanged() override;
 
@@ -77,6 +79,8 @@ namespace Halley {
 		float marqueePos = 0;
 		float unclippedWidth;
 		float lastCellWidth;
+
+		std::optional<Rect4f> worldClip;
 
 		void updateMinSize();
 		void updateText();

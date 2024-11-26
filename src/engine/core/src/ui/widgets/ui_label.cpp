@@ -30,13 +30,17 @@ UILabel::~UILabel()
 
 void UILabel::draw(UIPainter& painter) const
 {
-	if (needsClipX || needsClipY) {
+	if (needsClipX || needsClipY || worldClip) {
 		auto rect = getRect();
-		if (!needsClipX) {
-			rect = rect.grow(50, 0, 50, 0);
-		}
-		if (!needsClipY) {
-			rect = rect.grow(0, 50, 0, 50);
+		if (worldClip) {
+			rect = rect.intersection(*worldClip);
+		} else {
+			if (!needsClipX) {
+				rect = rect.grow(50, 0, 50, 0);
+			}
+			if (!needsClipY) {
+				rect = rect.grow(0, 50, 0, 50);
+			}
 		}
 		painter.withClip(rect).draw(renderer);
 	} else {
@@ -402,4 +406,9 @@ void UILabel::setDynamicValue(std::string_view key, ConfigNode value)
 void UILabel::setReplayBehavioursOnModified(bool replayOnModified)
 {
 	this->replayOnModified = replayOnModified;
+}
+
+void UILabel::setWorldClip(Rect4f rect)
+{
+	worldClip = rect;
 }

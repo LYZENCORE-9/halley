@@ -1,8 +1,5 @@
 #include "halley/ui/widgets/ui_scroll_pane.h"
-
 #include "halley/graphics/painter.h"
-#include "halley/ui/ui_style.h"
-#include "halley/support/logger.h"
 
 using namespace Halley;
 
@@ -14,10 +11,7 @@ UIScrollPane::UIScrollPane(String id, Vector2f clipSize, UISizer&& sizer, bool s
 	, scrollHorizontal(scrollHorizontal)
 	, scrollVertical(scrollVertical)
 {
-	setHandle(UIEventType::MouseWheel, [this] (const UIEvent& event)
-	{
-		onMouseWheel(event);
-	});
+	refreshScrollWheelHandler();
 
 	setHandle(UIEventType::MakeAreaVisible, [this] (const UIEvent& event)
 	{
@@ -85,6 +79,18 @@ Vector2f UIScrollPane::clampScrollPos(Vector2f pos) const
 {
 	return Vector2f(clamp2(pos.x, 0.0f, scrollHorizontal ? std::max(contentsSize.x - getSize().x, 0.0f) : 0.0f),
 					clamp2(pos.y, 0.0f, scrollVertical ? std::max(contentsSize.y - getSize().y, 0.0f) : 0.0f));
+}
+
+void UIScrollPane::refreshScrollWheelHandler()
+{
+	if (scrollWheelEnabled) {
+		setHandle(UIEventType::MouseWheel, [this] (const UIEvent& event)
+		{
+			onMouseWheel(event);
+		});
+	} else {
+		clearHandle(UIEventType::MouseWheel);
+	}
 }
 
 void UIScrollPane::scrollBy(Vector2f delta)
@@ -161,7 +167,10 @@ float UIScrollPane::getCoverageSize(UIScrollDirection direction) const
 
 void UIScrollPane::setScrollWheelEnabled(bool enabled)
 {
-	scrollWheelEnabled = enabled;
+	if (scrollWheelEnabled != enabled) {
+		scrollWheelEnabled = enabled;
+		refreshScrollWheelHandler();
+	}
 }
 
 bool UIScrollPane::isScrollWheelEnabled() const

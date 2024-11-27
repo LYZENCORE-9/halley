@@ -65,6 +65,8 @@ private:
 		// This ensures that a parent's replicator is always updated before the child's, avoiding introducing frame delays
 
 		HashSet<EntityId> replicatorsUpdated;
+		HashSet<EntityId> availableReplicators;
+		HashMap<EntityId, Vector<EntityId>> dependencies;
 		std::list<EntityId> toReplicate;
 
 		auto tryReplicating = [&] (EntityId id)
@@ -72,10 +74,10 @@ private:
 			auto entity = getWorld().getEntity(id);
 			if (const auto parent = entity.tryGetParent(); parent.has_value()) {
 				if (const auto* parentAnimation = parent->tryGetComponent<SpriteAnimationComponent>()) {
-					const bool parentHasReplicator = parent->hasComponent<SpriteAnimationReplicatorComponent>();
+					const bool parentHasReplicator = availableReplicators.contains(parent->getEntityId());
 					if (parentHasReplicator && !replicatorsUpdated.contains(parent->getEntityId())) {
 						// We'll do this one later
-						toReplicate.push_back(id);
+						dependencies[parent->getEntityId()].push_back(id);
 						return;
 					}
 
@@ -88,11 +90,20 @@ private:
 						spriteAnimation.player.updateSprite(sprite.sprite);
 					}
 					replicatorsUpdated.emplace(id);
+
+					if (dependencies.contains(id)) {
+						for (const auto child: dependencies.at(id)) {
+							toReplicate.push_back(child);
+						}
+					}
 				}
 			}
 		};
 
 		// Try the originals...
+		for (auto& e : replicatorFamily) {
+			availableReplicators.emplace(e.entityId);
+		}
 		for (auto& e : replicatorFamily) {
 			tryReplicating(e.entityId);
 		}

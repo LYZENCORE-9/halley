@@ -23,7 +23,7 @@ NavmeshSet NavmeshGenerator::generate(const Params& params)
 			const auto cell = makeCell(Vector2i(static_cast<int>(i), static_cast<int>(j)), bounds.origin, u, v);
 			auto cellPolygons = toNavmeshNode(generateByPolygonSubtraction(gsl::span<const Polygon>(&cell, 1), obstacles, cell.getBoundingCircle()));
 			generateConnectivity(cellPolygons);
-			postProcessPolygons(cellPolygons, maxSize, false, params.bounds);
+			postProcessPolygons(cellPolygons, maxSize, false, params.bounds, params.sceneName);
 			insertPolygons(cellPolygons, polygons);
 		}
 	}
@@ -41,7 +41,7 @@ NavmeshSet NavmeshGenerator::generate(const Params& params)
 
 	NavmeshSet result;
 	for (int region = 0; region < nRegions; ++region) {
-		result.add(makeNavmesh(polygons, bounds, params.subworldPortals, region, params.subWorld, params.getPolygonWeightCallback));
+		result.add(makeNavmesh(polygons, bounds, params.subworldPortals, region, params.subWorld, params.getPolygonWeightCallback, params.sceneName));
 	}
 	return result;
 }
@@ -203,7 +203,7 @@ void NavmeshGenerator::generateConnectivity(gsl::span<NavmeshNode> polygons)
 	}
 }
 
-void NavmeshGenerator::postProcessPolygons(Vector<NavmeshNode>& polygons, float maxSize, bool allowSimplification, const NavmeshBounds& bounds)
+void NavmeshGenerator::postProcessPolygons(Vector<NavmeshNode>& polygons, float maxSize, bool allowSimplification, const NavmeshBounds& bounds, const String& sceneName)
 {
 	// First, eliminate repeat links to the same neighbour
 	for (auto& poly: polygons) {
@@ -217,7 +217,7 @@ void NavmeshGenerator::postProcessPolygons(Vector<NavmeshNode>& polygons, float 
 		for (size_t i = 0; i < n;) {
 			if (poly.connections[i] >= 0 && poly.connections[i] == poly.connections[(i + 1) % n]) {
 				if (n <= 3) {
-					Logger::logWarning("Post-processing found a triangle with two faces connecting to the same node.");
+					Logger::logError("Navmesh generation for scene \"" + sceneName + "\": Post-processing found a triangle with two faces connecting to the same node: " + poly.polygon.toString());
 					i++;
 					continue;
 				}
@@ -690,7 +690,7 @@ std::optional<size_t> NavmeshGenerator::getNavmeshEdge(NavmeshNode& node, size_t
 	return {};
 }
 
-Navmesh NavmeshGenerator::makeNavmesh(gsl::span<NavmeshNode> nodes, const NavmeshBounds& bounds, gsl::span<const NavmeshSubworldPortal> subworldPortals, int region, int subWorld, std::function<float(int, const Polygon&)> getPolygonWeightCallback)
+Navmesh NavmeshGenerator::makeNavmesh(gsl::span<NavmeshNode> nodes, const NavmeshBounds& bounds, gsl::span<const NavmeshSubworldPortal> subworldPortals, int region, int subWorld, std::function<float(int, const Polygon&)> getPolygonWeightCallback, const String& sceneName)
 {
 	Vector<Navmesh::PolygonData> output;
 
@@ -737,5 +737,5 @@ Navmesh NavmeshGenerator::makeNavmesh(gsl::span<NavmeshNode> nodes, const Navmes
 		}
 	}
 	
-	return Navmesh(std::move(output), bounds, subWorld);
+	return Navmesh(std::move(output), bounds, subWorld, sceneName);
 }

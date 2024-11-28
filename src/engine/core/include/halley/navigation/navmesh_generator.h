@@ -15,6 +15,7 @@ namespace Halley {
 			int subWorld = 0;
 			float agentSize = 1.0f;
 			std::function<float(int, const Polygon&)> getPolygonWeightCallback;
+			String sceneName;
 		};
 
 		static NavmeshSet generate(const Params& params);
@@ -59,7 +60,7 @@ namespace Halley {
 
 		static Vector<NavmeshNode> toNavmeshNode(Vector<Polygon> polygons);
 		static void generateConnectivity(gsl::span<NavmeshNode> polygons);
-		static void postProcessPolygons(Vector<NavmeshNode>& polygons, float maxSize, bool allowSimplification, const NavmeshBounds& bounds);
+		static void postProcessPolygons(Vector<NavmeshNode>& polygons, float maxSize, bool allowSimplification, const NavmeshBounds& bounds, const String& sceneName);
 		static void removeDeadPolygons(Vector<NavmeshNode>& polygons);
 		static void tagEdgeConnections(gsl::span<NavmeshNode> nodes, gsl::span<const Line> mapEdges);
 
@@ -84,6 +85,6 @@ namespace Halley {
 
 		static std::optional<size_t> getNavmeshEdge(NavmeshNode& node, size_t side, gsl::span<const Line> mapEdges, gsl::span<const NavmeshSubworldPortal> subworldPortals);
 
-		static Navmesh makeNavmesh(gsl::span<NavmeshNode> nodes, const NavmeshBounds& bounds, gsl::span<const NavmeshSubworldPortal> subworldPortals, int region, int subWorld, std::function<float(int, const Polygon&)> getPolygonWeightCallback);
+		static Navmesh makeNavmesh(gsl::span<NavmeshNode> nodes, const NavmeshBounds& bounds, gsl::span<const NavmeshSubworldPortal> subworldPortals, int region, int subWorld, std::function<float(int, const Polygon&)> getPolygonWeightCallback, const String& sceneName);
 	};
 }

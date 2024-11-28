@@ -13,7 +13,7 @@ using namespace Halley;
 Navmesh::Navmesh()
 {}
 
-Navmesh::Navmesh(Vector<PolygonData> polys, const NavmeshBounds& bounds, int subWorld)
+Navmesh::Navmesh(Vector<PolygonData> polys, const NavmeshBounds& bounds, int subWorld, const String& name)
 	: subWorld(subWorld)
 	, origin(bounds.origin)
 	, normalisedCoordinatesBase(bounds.base)
@@ -62,7 +62,7 @@ Navmesh::Navmesh(Vector<PolygonData> polys, const NavmeshBounds& bounds, int sub
 	// Generate edges
 	postProcessPortals();
 	generateOpenEdges();
-	computePortalDistances();
+	computePortalDistances(name);
 }
 
 Navmesh::Navmesh(const ConfigNode& nodeData)
@@ -814,7 +814,7 @@ void Navmesh::postProcessPortals()
 	}
 }
 
-void Navmesh::computePortalDistances()
+void Navmesh::computePortalDistances(const String& name)
 {
 	const size_t nPortals = portals.size();
 	for (auto& p: portals) {
@@ -825,10 +825,12 @@ void Navmesh::computePortalDistances()
 		for (size_t j = i + 1; j < nPortals; ++j) {
 			auto& p0 = portals[i];
 			auto& p1 = portals[j];
+			const auto pos0 = WorldPosition(p0.pos, subWorld);
+			const auto pos1 = WorldPosition(p1.pos, subWorld);
 
-			const auto interPortalPath = pathfind(NavigationQuery(WorldPosition(p0.pos, subWorld), WorldPosition(p1.pos, subWorld), NavigationQuery::PostProcessingType::Normal, NavigationQuery::QuantizationType::None));
+			const auto interPortalPath = pathfind(NavigationQuery(pos0, pos1, NavigationQuery::PostProcessingType::Normal, NavigationQuery::QuantizationType::None));
 			if (!interPortalPath) {
-				Logger::logError("Unable to compute distance between portals on same navmesh.");
+				Logger::logError("Navmesh generation failure for \"" + name + "\": Unable to compute distance between portals on same navmesh - between " + toString(pos0) + " and " + toString(pos1));
 			}
 			const float cost = interPortalPath ? interPortalPath->getLength() : std::numeric_limits<float>::infinity();
 			p0.costToOtherPortalsHere[j] = cost;

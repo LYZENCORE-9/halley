@@ -106,7 +106,7 @@ namespace Halley {
 		
 		Navmesh();
 		Navmesh(const ConfigNode& nodeData);
-		Navmesh(Vector<PolygonData> polygons, const NavmeshBounds& bounds, int subWorld);
+		Navmesh(Vector<PolygonData> polygons, const NavmeshBounds& bounds, int subWorld, const String& name);
 
 		[[nodiscard]] ConfigNode toConfigNode() const;
 
@@ -206,7 +206,7 @@ namespace Halley {
 		void addToPortals(NodeAndConn nodeAndConn, int id);
 		Portal& getPortals(int id);
 		void postProcessPortals();
-		void computePortalDistances();
+		void computePortalDistances(const String& name);
 
 		void computeArea();
 		void computeBoundingCircle();

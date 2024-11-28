@@ -43,6 +43,11 @@ float NavigationPath::getLength() const
 	return len;
 }
 
+String NavigationPath::toString() const
+{
+	return "[ " + String::concat(path.const_span(), ", ", [] (const Point& p) { return p.pos.toString(); }) + " ]";
+}
+
 NavigationPath NavigationPath::merge(gsl::span<const NavigationPath> paths)
 {
 	if (paths.empty()) {

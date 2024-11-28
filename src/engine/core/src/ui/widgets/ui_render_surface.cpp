@@ -3,15 +3,18 @@
 #include "halley/api/halley_api.h"
 #include "halley/graphics/render_context.h"
 #include "halley/graphics/render_target/render_target_texture.h"
+#include "halley/graphics/material/material.h"
+#include "halley/graphics/material/material_definition.h"
 
 using namespace Halley;
 
 UIRenderSurface::UIRenderSurface(String id, Vector2f minSize, std::optional<UISizer> sizer, const HalleyAPI& api, Resources& resources, const String& materialName, RenderSurfaceOptions options)
 	: UIWidget(std::move(id), Vector2f::max(Vector2f(1, 1), minSize), std::move(sizer))
-	, renderSurface(std::make_unique<RenderSurface>(*api.video, resources, materialName, options))
+	, renderSurface(std::make_unique<RenderSurface>(*api.video, options))
 	, colour(1, 1, 1, 1)
 	, scale(1, 1)
 {
+	material = std::make_shared<Material>(resources.get<MaterialDefinition>(materialName));
 }
 
 // Update thread
@@ -150,7 +153,7 @@ void UIRenderSurface::drawOnPainter(Painter& painter) const
 	if (renderParams) {
 		assert(renderSurface->isReady());
 
-		auto sprite = renderSurface->getSurfaceSprite().clone()
+		auto sprite = renderSurface->getSurfaceSprite(material).clone()
 			.setPosition(renderParams->pos + renderParams->border.xy() * renderParams->scale)
 			.setColour(renderParams->colour)
 			.setScale(Vector2f(1.0f, 1.0f) / origScale);
@@ -159,6 +162,11 @@ void UIRenderSurface::drawOnPainter(Painter& painter) const
 
 		renderParams = {};
 	}
+}
+
+void UIRenderSurface::setMaterial(Resources& resources, const String& materialName)
+{
+	material = std::make_shared<Material>(resources.get<MaterialDefinition>(materialName));
 }
 
 void UIRenderSurface::setColour(Colour4f col)

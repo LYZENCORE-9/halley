@@ -119,6 +119,8 @@ namespace Halley {
 		[[nodiscard]] std::optional<NavigationPath> makePath(const NavigationQuery& query, const Vector<NodeAndConn>& nodePath) const;
 		[[nodiscard]] std::optional<NavigationPath> pathfind(const NavigationQuery& query) const;
 
+		[[nodiscard]] Vector<int> getNodeDiscreteDistances(NodeId startPoint) const;
+
 		[[nodiscard]] const Vector<Node>& getNodes() const { return nodes; }
 		[[nodiscard]] const Vector<Polygon>& getPolygons() const { return polygons; }
 		[[nodiscard]] const Vector<Portal>& getPortals() const { return portals; }

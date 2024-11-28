@@ -394,6 +394,33 @@ std::optional<NavigationPath> Navmesh::pathfind(const NavigationQuery& query) co
 	return makePath(query, nodePath.value());
 }
 
+Vector<int> Navmesh::getNodeDiscreteDistances(NodeId startPoint) const
+{
+	Vector<int> result;
+	result.resize(nodes.size(), std::numeric_limits<int>::max());
+
+	std::list<NodeId> todo;
+	todo.push_back(startPoint);
+	result[startPoint] = 0;
+
+	while (!todo.empty()) {
+		const auto curId = todo.front();
+		todo.pop_front();
+		const auto curDist = result[curId] + 1;
+
+		for (size_t i = 0; i < nodes[curId].nConnections; ++i) {
+			if (auto otherId = nodes[curId].connections[i]) {
+				if (result[*otherId] == std::numeric_limits<int>::max()) {
+					result[*otherId] = curDist;
+					todo.push_back(*otherId);
+				}
+			}
+		}
+	}
+
+	return result;
+}
+
 Vector<Navmesh::NodeAndConn> Navmesh::makeResult(const Vector<State>& state, int startId, int endId) const
 {
 	Vector<NodeAndConn> result;
